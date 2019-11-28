@@ -1,2 +1,7 @@
 ---
 # Role tasks
+- block:
+    - import_tasks: check_configuration.yml
+    - import_tasks: install.yml
+  tags:
+    role::check_mk_agent_steal_time
