@@ -33,10 +33,6 @@
         path: /usr/local/vmguestlib
       register: read_check_mk_agent_steal_time_vmguestlib_result
 
-    - name: debug variable
-      debug:
-        var: read_check_mk_agent_steal_time_script_result
-
     - name: Assert check_mk_agent_steal_time is installed
       assert:
         that:
