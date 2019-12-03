@@ -1,2 +1,51 @@
 ---
 # Tasks for testing role
+- name: Configure docker sandbox environment
+  hosts: localhost
+  roles:
+    - role: amtega.docker_presets
+      docker_presets_images_json_query: >-
+        [? starts_with(name, `centos-7`) ]
+  tags:
+    - sandbox
+
+- name: Run idempotence test
+  hosts: localhost
+  roles:
+    - role: amtega.docker_sandbox
+      docker_sandbox_state: started
+  tags:
+    - sandbox
+
+- name: Test check_mk_agent role
+  hosts: docker_sandbox_containers
+  roles:
+    - role: amtega.check_mk_agent
+    - role: amtega.check_mk_agent_steal_time
+  tasks:
+    - name: Check if configuration file exists
+      stat:
+        path: "{{ check_mk_agent_steal_time_local_dir }}/300/check-cpu_stealth.sh"
+      register: read_check_mk_agent_steal_time_script_result
+
+    - name: Check if vmguestlib dir exist
+      stat:
+        path: /usr/local/vmguestlib
+      register: read_check_mk_agent_steal_time_vmguestlib_result
+
+    - name: Assert check_mk_agent_steal_time is installed
+      assert:
+        that:
+          - read_check_mk_agent_steal_time_script_result.stat.exists
+          - read_check_mk_agent_steal_time_vmguestlib_result.stat.exists
+  tags:
+    - idempotence
+
+- name: Cleanup docker docker sandbox
+  hosts: localhost
+  roles:
+    - role: amtega.docker_sandbox
+      docker_sandbox_state: absent
+  tags:
+    - cleanup
+    - sandbox

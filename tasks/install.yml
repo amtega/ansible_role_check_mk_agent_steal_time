@@ -1,0 +1,30 @@
+---
+- block:
+
+    - name: copy check-mk script
+      become: true
+      copy:
+        src: check-cpu_stealth.sh
+        dest: "{{ check_mk_agent_steal_time_local_dir }}/300/"
+        mode: u+x
+
+
+    - name: copy directory
+      copy:
+        src: vmguestlib
+        dest: /usr/local/
+        mode: 0775
+        directory_mode: true
+
+    - name: comment rule line in check-mk config
+      lineinfile:
+        dest: "{{ check_mk_agent_steal_time_config_dir }}/mrpe.cfg"
+        regexp: '^(.*cpu_stealth.*)'
+        line: '# \1'
+        backrefs: yes
+        state: present
+      when: read_check_mk_agent_config_file_result.stat.exists
+      
+  tags:
+    - role::check_mk_agent_steal_time
+    - role::check_mk_agent_steal_time::install
