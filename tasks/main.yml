@@ -1,5 +1,6 @@
 ---
 # Role tasks
+
 - include_role:
     name: amtega.check_platform
   vars:
@@ -7,8 +8,73 @@
       centos: 7
       rhel: 7
 
+- include_role:
+    name: amtega.packages
+  vars:
+    packages_python:
+      all:
+        all:
+          - name: vmguestlib
+            state: present
+            extra_args: "--no-deps"
+
 - block:
-    - import_tasks: check_configuration.yml
-    - import_tasks: install.yml
+    - name: Search Check_MK agent local dir
+      shell: >-
+        /usr/bin/check_mk_agent | grep '[L]ocalDirectory' | awk {'print $2'}
+      args:
+        warn: no
+      changed_when: false
+      failed_when: >-
+        check_mk_agent_steal_time_search_local_dir_result.stdout_lines
+        | length == 0
+      register: check_mk_agent_steal_time_search_local_dir_result
+
+    - name: Search Check_MK agent config dir
+      shell: >-
+        /usr/bin/check_mk_agent | grep '[A]gentDirectory' | awk {'print $2'}
+      args:
+        warn: no
+      changed_when: false
+      failed_when: >-
+        check_mk_agent_steal_time_search_config_dir_result.stdout_lines
+        | length == 0
+      register: check_mk_agent_steal_time_search_config_dir_result
+
+    - name: Setup directory for Check_MK agent local checks
+      file:
+        path: >-
+          {{ check_mk_agent_steal_time_local_dir
+             + "/"
+             + check_mk_agent_steal_time_seconds | string }}
+        state: directory
+        owner: root
+        group: root
+        mode: 0644
+
+    - name: Setup Check_MK agent script
+      template:
+        src: check-cpu-steal-time
+        dest: >-
+          {{ check_mk_agent_steal_time_local_dir
+             + "/"
+             + check_mk_agent_steal_time_seconds | string
+             + "/" }}
+        owner: root
+        group: root
+        mode: 0755
+
+    - name: Setup vmguest-stats-stealXcpu script
+      template:
+        src: vmguest-stats-stealXcpu
+        dest: /usr/bin
+        owner: root
+        group: root
+        mode: 0775
+
+  vars:
+    check_mk_agent_steal_time_local_dir: >-
+      {{ check_mk_agent_steal_time_search_local_dir_result.stdout_lines[0] }}
+
   tags:
-    role::check_mk_agent_steal_time
+    - role::check_mk_agent_steal_time

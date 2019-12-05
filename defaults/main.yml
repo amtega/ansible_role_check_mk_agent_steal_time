@@ -1,2 +1,6 @@
 ---
 # Role default lower priority variables
+
+# Check interval in seconds
+
+check_mk_agent_steal_time_seconds: 300

@@ -1,0 +1,45 @@
+#!/bin/bash
+
+LANG=C
+
+st_unk=3
+st_ok=0
+
+# Detect virtualization environment
+
+rhev=$(dmidecode 2>/dev/null | grep -E 'oVirt|RHEV Hypervisor' || lspci 2>/dev/null | grep -E 'Virtio' )
+vmware=$(ps auxf | grep vmtoolsd | grep -v grep)
+
+# Gather steal time
+
+number=0
+tools=""
+if [ ! -z "$rhev" ]; then
+	number=`mpstat 5 1 | tail -n 1 | awk '{ print $(NF-2) }'`
+	tools="rhev"
+elif [ ! -z "$vmware" ]; then
+	number=`/usr/bin/vmguest-stats-stealXcpu -c | grep CPU | awk '{print $(NF-1)}'`;
+	tools="vmware"
+else
+	tools="no"
+fi
+
+# Build output
+
+if [ "$tools" != "no" ] && [ $? -eq 0 ]; then
+  if [ "$tools" == "rhev" ]; then
+     msg="cpu_steal_time cpu_steal_time=$number;;;; CPU RHEV stolen time: $number (%)"
+     ret=$st_ok
+  elif [ "$tools" == "vmware" ]; then
+   msg="cpu_steal_time cpu_steal_time=$number;;;; CPU VMware stolen time: $number (%)"
+   ret=$st_ok
+  fi
+elif [ "$tools" == "no" ]; then
+   msg="cpu_steal_time cpu_steal_time=0;;;; Tools not installed on host"
+   ret=$st_unk
+else
+   msg="cpu_steal_time cpu_steal_time=0;;;; Unknown error"
+   ret=$st_unk
+fi
+
+echo "$ret $msg"
