@@ -1,25 +1,9 @@
-#!/usr/bin/python
+#!{{ packages_python_bin_dir }}python
 
-### This program is free software; you can redistribute it and/or
-### modify it under the terms of the GNU General Public License
-### as published by the Free Software Foundation; either version 2
-### of the License, or (at your option) any later version.
-###
-### This program is distributed in the hope that it will be useful,
-### but WITHOUT ANY WARRANTY; without even the implied warranty of
-### MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-### GNU General Public License for more details.
-###
-### You should have received a copy of the GNU General Public License
-### along with this program; if not, write to the Free Software
-### Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
+# This script is based on previous work from Dag Wieers <dag@wieers.com>
+# available in
+# https://github.com/dagwieers/vmguestlib/blob/master/vmguest-stats
 
-### Copyright 2013-2014 Dag Wieers <dag@wieers.com>
-
-### AMTEGA 2019/04/15 - Modificacion para devolver el % de Steal x vCPU, para que sea mas
-### 					asimilable el Steal Clasico. 
-### Original en https://github.com/dagwieers/vmguestlib/blob/master/vmguest-stats
- 
 import vmguestlib
 import optparse
 import time
@@ -30,16 +14,16 @@ __version__ = vmguestlib.__version__
 delay = 10
 count = 1
 
-### AMTEGA 2019/04/15
 cpu = multiprocessing.cpu_count()
 
-parser = optparse.OptionParser(usage='usage: %prog [-a] [-c] [-m] delay count', version='%prog ' + __version__)
-parser.add_option( '-a', '--all', action='store_true',
-    dest='all', help='show all statistics (default)' )
-parser.add_option( '-c', '--cpu', action='store_true',
-    dest='cpu', help='show cpu statistics' )
-parser.add_option( '-m', '--mem', action='store_true',
-    dest='memory', help='show memory statistics' )
+parser = optparse.OptionParser(usage='usage: %prog [-a] [-c] [-m] delay count',
+                               version='%prog ' + __version__)
+parser.add_option('-a', '--all', action='store_true',
+                  dest='all', help='show all statistics (default)')
+parser.add_option('-c', '--cpu', action='store_true',
+                  dest='cpu', help='show cpu statistics')
+parser.add_option('-m', '--mem', action='store_true',
+                  dest='memory', help='show memory statistics')
 (options, args) = parser.parse_args()
 
 try:
@@ -63,14 +47,10 @@ if options.cpu:
     OldUsedMs = gl.GetCpuUsedMs()
 
 while count == -1 or count > 0:
-
     time.sleep(delay)
-
     gl.UpdateInfo()
-
     print time.asctime()
 
-    # TODO: Add clearscreen and bold/underline escape sequences
     if options.cpu:
         NewElapsedMs = gl.GetElapsedMs()
         NewStolenMs = gl.GetCpuStolenMs()
@@ -82,14 +62,15 @@ while count == -1 or count > 0:
             StolenCpu = 0
             EffectiveMhz = 0
         else:
-            UsedCpu = (NewUsedMs - OldUsedMs) * 100.0 / (NewElapsedMs - OldElapsedMs)
-            StolenCpu = (NewStolenMs - OldStolenMs) * 100.0 / (NewElapsedMs - OldElapsedMs) 
-            EffectiveMhz = gl.GetHostProcessorSpeed() * (NewUsedMs - OldUsedMs) / (NewElapsedMs - OldElapsedMs)
+            UsedCpu = ((NewUsedMs - OldUsedMs) * 100.0
+                       / (NewElapsedMs - OldElapsedMs))
+            StolenCpu = ((NewStolenMs - OldStolenMs) * 100.0
+                         / (NewElapsedMs - OldElapsedMs))
+            EffectiveMhz = (gl.GetHostProcessorSpeed()
+                            * (NewUsedMs - OldUsedMs)
+                            / (NewElapsedMs - OldElapsedMs))
 
-
-		
-	# AMTEGA 2019/0415 - Dividimos por el numero de vCPUs para obtener un valor asimilable al Steal clasico
-	StolenCpu = StolenCpu / cpu
+        StolenCpu = StolenCpu / cpu
 
         CpuLimit = gl.GetCpuLimitMHz()
         print 'VM Processor'
@@ -138,9 +119,3 @@ while count == -1 or count > 0:
         count = count - 1
 
 gl.CloseHandle()
-
-# vim:ts=4:sw=4:et
-
-
-
-

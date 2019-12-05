@@ -1,22 +1,10 @@
 # Ansible check_mk_agent_steal_time role
 
-This is an [Ansible](http://www.ansible.com) role which install local module for check_mk to check cpu steal time
-## Requirements
-
-
-[Ansible 2.7+](http://docs.ansible.com/ansible/latest/intro_installation.html)
+This is an [Ansible](http://www.ansible.com) role to install Check_MK plugin to check virtual machines steal time.
 
 ## Role Variables
 
 A list of all the default variables for this role is available in `defaults/main.yml`.
-
-The necessary files are in the directory files/
-
-
-## Dependencies
-
-- [amtega.check_platform](https://galaxy.ansible.com/amtega/check_platform)
-
 
 ## Usage
 
@@ -28,7 +16,6 @@ This is an example playbook:
 - hosts: all
   roles:
     - role: amtega.check_mk_agent_steal_time
-
 ```
 
 ## Testing
@@ -55,3 +42,5 @@ This role is distributed in the hope that it will be useful, but WITHOUT ANY WAR
 ## Author Information
 
 - José Enrique Mourón Regueira
+- Juan Antonio Valiño García
+- Based on [previous work](https://github.com/dagwieers/vmguestlib/blob/master/vmguest-stats) from Dag Wieers <dag@wieers.com>

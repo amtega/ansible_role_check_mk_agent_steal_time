@@ -1,5 +1,6 @@
 ---
 # Tasks for testing role
+
 - name: Configure docker sandbox environment
   hosts: localhost
   roles:
@@ -22,22 +23,6 @@
   roles:
     - role: amtega.check_mk_agent
     - role: amtega.check_mk_agent_steal_time
-  tasks:
-    - name: Check if configuration file exists
-      stat:
-        path: "{{ check_mk_agent_steal_time_local_dir }}/300/check-cpu_stealth.sh"
-      register: read_check_mk_agent_steal_time_script_result
-
-    - name: Check if vmguestlib dir exist
-      stat:
-        path: /usr/local/vmguestlib
-      register: read_check_mk_agent_steal_time_vmguestlib_result
-
-    - name: Assert check_mk_agent_steal_time is installed
-      assert:
-        that:
-          - read_check_mk_agent_steal_time_script_result.stat.exists
-          - read_check_mk_agent_steal_time_vmguestlib_result.stat.exists
   tags:
     - idempotence
 
