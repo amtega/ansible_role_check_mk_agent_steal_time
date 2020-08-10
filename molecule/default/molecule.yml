@@ -29,6 +29,12 @@ lint: |
 platforms:
   - name: "centos7-${INSTANCE_UUID:-1}"
     image: centos:7
+    command: /sbin/init
+    tmpfs:
+      - /run
+      - /tmp
+    volumes:
+      - /sys/fs/cgroup:/sys/fs/cgroup:ro
     groups:
       - molecule_hosts
       - molecule_hosts_centos
