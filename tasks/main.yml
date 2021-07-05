@@ -28,7 +28,7 @@
         /usr/bin/check_mk_agent | grep '[A]gentDirectory' | awk {'print $2'}
       args:
         warn: no
-      changed_when: false
+      changed_when: no
       failed_when: >-
         check_mk_agent_steal_time_search_config_dir_result.stdout_lines
         | length == 0
