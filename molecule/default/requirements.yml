@@ -1,0 +1,7 @@
+---
+
+roles:
+  - amtega.check_mk_agent
+  - amtega.packages
+
+collections: []
