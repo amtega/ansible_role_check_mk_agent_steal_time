@@ -1,7 +1,8 @@
 ---
 # Role tasks
 
-- include_role:
+- name: Setup packages
+  include_role:
     name: amtega.packages
   vars:
     packages_python:
