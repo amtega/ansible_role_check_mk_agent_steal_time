@@ -26,3 +26,4 @@ dependencies:
       check_platform_distributions:
         centos: 7
         redhat: 7
+        fedora: 33
