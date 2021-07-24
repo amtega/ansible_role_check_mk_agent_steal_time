@@ -42,4 +42,5 @@ This role is distributed in the hope that it will be useful, but WITHOUT ANY WAR
 
 - José Enrique Mourón Regueira
 - Juan Antonio Valiño García
+- Carlos Chedas Fernández
 - Based on [previous work](https://github.com/dagwieers/vmguestlib/blob/master/vmguest-stats) from Dag Wieers <dag@wieers.com>
