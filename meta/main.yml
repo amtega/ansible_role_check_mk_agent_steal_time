@@ -4,7 +4,10 @@
 galaxy_info:
   role_name: check_mk_agent_steal_time
   namespace: amtega
-  author: José Enrique Mourón Regueira / Juan Antonio Valiño García
+  author: >-
+    José Enrique Mourón Regueira /
+    Juan Antonio Valiño García /
+    Carlos Chedas Fernández
   description: Install Check_MK plugin to check virtual machines steal time
   company: AMTEGA - Xunta de Galicia
   license: GPLv3 or EUPL
@@ -13,6 +16,10 @@ galaxy_info:
     - name: EL
       versions:
         - 7
+    - name: Fedora
+      versions:
+        - 33
+        - 34
   galaxy_tags:
     - system
     - monitoring
