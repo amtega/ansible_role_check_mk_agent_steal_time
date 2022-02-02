@@ -16,6 +16,7 @@ galaxy_info:
     - name: EL
       versions:
         - 7
+        - 8
     - name: Fedora
       versions:
         - 34
@@ -33,4 +34,4 @@ dependencies:
       check_platform_distributions:
         centos: 7
         redhat: 7
-        fedora: 33
+        fedora: 34

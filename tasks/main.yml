@@ -15,7 +15,8 @@
 - block:
     - name: Search Check_MK agent local dir
       shell: >-
-        /usr/bin/check_mk_agent | grep '[L]ocalDirectory' | awk {'print $2'}
+         set -o pipefail ;
+         /usr/bin/check_mk_agent | grep '[L]ocalDirectory' | awk {'print $2'}
       args:
         warn: no
       changed_when: no
@@ -65,10 +66,8 @@
         owner: root
         group: root
         mode: 0775
-
   vars:
     check_mk_agent_steal_time_local_dir: >-
       {{ check_mk_agent_steal_time_search_local_dir_result.stdout_lines[0] }}
-
   tags:
     - role::check_mk_agent_steal_time
